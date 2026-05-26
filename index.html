@@ -14,28 +14,25 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal',sans-serif;background:#0d0d14;color:#eeeef8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.box{width:100%;max-width:420px}
+.box{width:100%;max-width:400px}
 .logo{text-align:center;margin-bottom:32px}
 .logo div:first-child{font-size:48px;margin-bottom:8px}
 .logo h1{font-size:22px;font-weight:900;color:#f6a832}
 .logo p{font-size:13px;color:#9191b4;margin-top:4px}
-.card{background:#1a1a28;border:1px solid #2e2e48;border-radius:14px;padding:20px;margin-bottom:16px}
+.card{background:#1a1a28;border:1px solid #2e2e48;border-radius:14px;padding:20px}
 .sec{font-size:11px;font-weight:700;color:#f6a832;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
 .fg{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .fg label{font-size:12px;color:#9191b4;font-weight:600}
 .fg input{background:#0d0d14;border:1px solid #2e2e48;border-radius:10px;padding:12px 14px;color:#eeeef8;font-family:'Tajawal',sans-serif;font-size:15px;width:100%;-webkit-appearance:none}
 .fg input:focus{outline:none;border-color:#f6a832}
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;background:#f6a832;color:#000;margin-bottom:10px}
-.btn:active{opacity:.85}
-.result-box{background:#0d0d14;border:1px solid #2e2e48;border-radius:10px;padding:12px 14px;margin-top:10px;display:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;background:#f6a832;color:#000;margin-bottom:10px;transition:opacity .15s}
+.btn:active{opacity:.8}
+.result-box{background:#0d0d14;border:1px solid #2e2e48;border-radius:10px;padding:12px 14px;display:none}
 .result-label{font-size:11px;color:#9191b4;margin-bottom:6px}
 .result-hash{font-size:12px;color:#22c55e;word-break:break-all;font-family:monospace;line-height:1.6}
-.copy-btn{margin-top:8px;background:#222234;border:1px solid #2e2e48;color:#eeeef8;border-radius:8px;padding:8px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;width:100%}
-.copy-btn:active{background:#f6a832;color:#000}
-.note{background:#1a1a28;border:1px solid #2e2e48;border-radius:14px;padding:16px;font-size:13px;color:#9191b4;line-height:1.8}
-.note strong{color:#eeeef8}
-.note code{background:#0d0d14;padding:2px 7px;border-radius:5px;color:#f6a832;font-size:12px}
-.divider{border:none;border-top:1px solid #2e2e48;margin:14px 0}
+.copy-btn{margin-top:8px;background:#222234;border:1px solid #2e2e48;color:#eeeef8;border-radius:8px;padding:8px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:background .15s,color .15s}
+.copy-btn.copied{background:#f6a832;color:#000}
+.note{font-size:12px;color:#9191b4;text-align:center;margin-top:16px;line-height:1.8}
 </style>
 </head>
 <body>
@@ -43,47 +40,24 @@ body{font-family:'Tajawal',sans-serif;background:#0d0d14;color:#eeeef8;min-heigh
   <div class="logo">
     <div>🔐</div>
     <h1>مولّد الهاش</h1>
-    <p>لنظام متجري</p>
+    <p>SHA-256 — العمليات محلية على جهازك فقط</p>
   </div>
 
   <div class="card">
-    <div class="sec">كلمة المرور</div>
+    <div class="sec">النص</div>
     <div class="fg">
-      <label>اكتب كلمة المرور الجديدة</label>
-      <input type="text" id="pass-input" placeholder="مثال: MyPass2026">
+      <label>اكتب النص أو كلمة المرور</label>
+      <input type="text" id="input" placeholder="مثال: MyPass2026" dir="auto">
     </div>
-    <button class="btn" onclick="genHash('pass')">⚡ توليد الهاش</button>
-    <div class="result-box" id="pass-result">
-      <div class="result-label">الهاش (انسخه وضعه في PASS_HASH بالكود)</div>
-      <div class="result-hash" id="pass-hash"></div>
-      <button class="copy-btn" onclick="copyHash('pass-hash')">📋 نسخ</button>
+    <button class="btn" onclick="genHash()">⚡ توليد الهاش</button>
+    <div class="result-box" id="result">
+      <div class="result-label">الهاش (SHA-256)</div>
+      <div class="result-hash" id="hash-output"></div>
+      <button class="copy-btn" id="copy-btn" onclick="copyHash()">📋 نسخ</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="sec">كود التفعيل</div>
-    <div class="fg">
-      <label>اكتب كود التفعيل الجديد</label>
-      <input type="text" id="activ-input" placeholder="مثال: activate2026">
-    </div>
-    <button class="btn" onclick="genHash('activ')">⚡ توليد الهاش</button>
-    <div class="result-box" id="activ-result">
-      <div class="result-label">الهاش (انسخه وضعه في ACTIV_HASH بالكود)</div>
-      <div class="result-hash" id="activ-hash"></div>
-      <button class="copy-btn" onclick="copyHash('activ-hash')">📋 نسخ</button>
-    </div>
-  </div>
-
-  <div class="note">
-    <strong>كيف تستخدمها:</strong>
-    <div class="divider"></div>
-    1. اكتب الكلمة الجديدة وولّد الهاش<br>
-    2. افتح الكود الأصلي للتطبيق<br>
-    3. ابحث عن <code>PASS_HASH</code> أو <code>ACTIV_HASH</code><br>
-    4. استبدل الهاش القديم بالجديد<br><br>
-    <strong>⚠️ هاد الموقع لا يحفظ أي شيء</strong><br>
-    كل العمليات محلية على جهازك فقط
-  </div>
+  <p class="note">لا يُحفظ أي شيء — كل شيء يعمل محلياً في متصفحك</p>
 </div>
 
 <script>
@@ -91,21 +65,22 @@ async function sha256(msg){
   const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-async function genHash(type){
-  const input=document.getElementById(type+'-input').value.trim();
-  if(!input){ alert('اكتب النص أولاً'); return; }
-  const hash=await sha256(input);
-  document.getElementById(type+'-hash').textContent=hash;
-  document.getElementById(type+'-result').style.display='block';
+async function genHash(){
+  const val=document.getElementById('input').value.trim();
+  if(!val){alert('اكتب النص أولاً');return;}
+  const hash=await sha256(val);
+  document.getElementById('hash-output').textContent=hash;
+  document.getElementById('result').style.display='block';
 }
-async function copyHash(id){
-  const text=document.getElementById(id).textContent;
+document.getElementById('input').addEventListener('keydown',e=>{if(e.key==='Enter')genHash();});
+async function copyHash(){
+  const text=document.getElementById('hash-output').textContent;
+  const btn=document.getElementById('copy-btn');
   try{
     await navigator.clipboard.writeText(text);
-    const btn=document.querySelector(`#${id} + button`) || event.target;
-    const orig=event.target.textContent;
-    event.target.textContent='✅ تم النسخ';
-    setTimeout(()=>event.target.textContent=orig,1500);
+    btn.textContent='✅ تم النسخ';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 نسخ';btn.classList.remove('copied');},1500);
   }catch{
     prompt('انسخ الهاش يدوياً:',text);
   }
